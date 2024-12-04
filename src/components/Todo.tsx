@@ -36,7 +36,7 @@ export const Todo = () => {
       <div className="flex items-center my-3">
         <ShieldCheckIcon className="h-8 w-8 mr-3 text-indigo-500 cursor-pointer" />
         <span className="text-center text-3xl font-extrabold">
-          Task Manager
+          学びの記録
         </span>
       </div>
       <ArrowRightOnRectangleIcon
@@ -46,7 +46,7 @@ export const Todo = () => {
       <form onSubmit={submitTaskHandler}>
         <input
           className="mb-3 mr-3 px-3 py-2 border border-gray-300"
-          placeholder="title ?"
+          placeholder="タイトル"
           type="text"
           onChange={(e) => updateTask({ ...editedTask, title: e.target.value })}
           value={editedTask.title || ''}
@@ -55,7 +55,7 @@ export const Todo = () => {
           className="disabled:opacity-40 mx-3 py-2 px-3 text-white bg-indigo-600 rounded"
           disabled={!editedTask.title}
         >
-          {editedTask.id === 0 ? 'Create' : 'Update'}
+          {editedTask.id === 0 ? '登録' : '更新'}
         </button>
       </form>
       {isLoading ? (
