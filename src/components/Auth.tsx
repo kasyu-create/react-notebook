@@ -34,10 +34,10 @@ export const Auth = () => {
       <div className="flex items-center">
         <CheckBadgeIcon className="h-8 w-8 mr-2 text-blue-500" />
         <span className="text-center text-3xl font-extrabold">
-          Todo app by React/Go(Echo)
+          学びの記録
         </span>
       </div>
-      <h2 className="my-6">{isLogin ? 'Login' : 'Create a new account'}</h2>
+      <h2 className="my-6">{isLogin ? 'ログイン' : '新規登録'}</h2>
       <form onSubmit={submitAuthHandler}>
         <div>
           <input
@@ -45,7 +45,7 @@ export const Auth = () => {
             name="email"
             type="email"
             autoFocus
-            placeholder="Email address"
+            placeholder="メールアドレス"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
           />
@@ -55,7 +55,7 @@ export const Auth = () => {
             className="mb-3 px-3 text-sm py-2 border border-gray-300"
             name="password"
             type="password"
-            placeholder="Password"
+            placeholder="パスワード"
             onChange={(e) => setPw(e.target.value)}
             value={pw}
           />
@@ -66,7 +66,7 @@ export const Auth = () => {
             disabled={!email || !pw}
             type="submit"
           >
-            {isLogin ? 'Login' : 'Sign Up'}
+            {isLogin ? 'ログイン' : '新規登録'}
           </button>
         </div>
       </form>
