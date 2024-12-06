@@ -31,11 +31,11 @@ export const Auth = () => {
   }
   return (
     <div className="flex justify-center items-center flex-col min-h-screen text-gray-600 font-mono">
-      <div className="flex items-center">
-        <CheckBadgeIcon className="h-8 w-8 mr-2 text-blue-500" />
-        <span className="text-center text-3xl font-extrabold">
-          学びの記録
-        </span>
+      <div className="flex items-center" style={{ marginLeft: '-38px' }}>
+          <CheckBadgeIcon className="h-8 w-8 mr-2 text-blue-500" />
+          <span className="text-center text-3xl font-extrabold">
+            学びの記録
+          </span>
       </div>
       <h2 className="my-6">{isLogin ? 'ログイン' : '新規登録'}</h2>
       <form onSubmit={submitAuthHandler}>

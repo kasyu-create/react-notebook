@@ -38,11 +38,11 @@ export const Todo = () => {
         <span className="text-center text-3xl font-extrabold">
           学びの記録
         </span>
+        <ArrowRightOnRectangleIcon
+          onClick={logout}
+          className="h-6 w-6 my-6 text-blue-500 cursor-pointer ml-5"
+        />
       </div>
-      <ArrowRightOnRectangleIcon
-        onClick={logout}
-        className="h-6 w-6 my-6 text-blue-500 cursor-pointer"
-      />
       <form onSubmit={submitTaskHandler}>
         <input
           className="mb-3 mr-3 px-3 py-2 border border-gray-300"
