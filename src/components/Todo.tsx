@@ -6,6 +6,7 @@ import {
 } from '@heroicons/react/24/solid'
 import useStore from '../store'
 import { useQueryTasks } from '../hooks/useQueryTasks'
+import { useQueryGenres } from '../hooks/useQueryGenres' // 追加
 import { useMutateTask } from '../hooks/useMutateTask'
 import { useMutateAuth } from '../hooks/useMutateAuth'
 import { TaskItem } from './TaskItem'
@@ -14,7 +15,8 @@ export const Todo = () => {
   const queryClient = useQueryClient()
   const { editedTask } = useStore()
   const updateTask = useStore((state) => state.updateEditedTask)
-  const { data, isLoading } = useQueryTasks()
+  const { data: tasks, isLoading: isTasksLoading } = useQueryTasks()
+  const { data: genres, isLoading: isGenresLoading } = useQueryGenres() // 追加
   const { createTaskMutation, updateTaskMutation } = useMutateTask()
   const { logoutMutation } = useMutateAuth()
   const submitTaskHandler = (e: FormEvent<HTMLFormElement>) => {
@@ -43,6 +45,25 @@ export const Todo = () => {
           className="h-6 w-6 my-6 text-blue-500 cursor-pointer ml-5"
         />
       </div>
+
+      <div className="my-2">
+        <p>ジャンル:</p>
+        {isGenresLoading ? (
+          <p>ジャンルをロード中...</p>
+        ) : (
+          <div className="flex space-x-2">
+            {genres?.map((genre: { id: number; name: string }) => (
+              <span
+                key={genre.id}
+                className="px-3 py-1 bg-gray-200 rounded-lg text-sm"
+              >
+                {genre.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
       <form onSubmit={submitTaskHandler}>
         <input
           className="mb-3 mr-3 px-3 py-2 border border-gray-300"
@@ -58,11 +79,12 @@ export const Todo = () => {
           {editedTask.id === 0 ? '登録' : '更新'}
         </button>
       </form>
-      {isLoading ? (
-        <p>Loading...</p>
+
+      {isTasksLoading ? (
+        <p>タスクをロード中...</p>
       ) : (
         <ul className="my-5">
-          {data?.map((task) => (
+          {tasks?.map((task: { id: number; title: string }) => (
             <TaskItem key={task.id} id={task.id} title={task.title} />
           ))}
         </ul>
