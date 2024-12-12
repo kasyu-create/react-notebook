@@ -1,8 +1,10 @@
 export type Task = {
     id: number
     title: string
-    created_at: Date
-    updated_at: Date
+    genreId?: number | null
+    order?: number | null
+    created_at: string
+    updated_at: string
   }
   export type CsrfToken = {
     csrf_token: string
