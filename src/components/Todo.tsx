@@ -1,56 +1,71 @@
-import { FormEvent, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { FormEvent, useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowRightOnRectangleIcon,
   ShieldCheckIcon,
-} from '@heroicons/react/24/solid'
-import useStore from '../store'
-import { useQueryTasks } from '../hooks/useQueryTasks'
-import { useQueryGenres } from '../hooks/useQueryGenres'
-import { useMutateTask } from '../hooks/useMutateTask'
-import { useMutateAuth } from '../hooks/useMutateAuth'
-import { TaskItem } from './TaskItem'
+} from '@heroicons/react/24/solid';
+import useStore from '../store';
+import { useQueryTasks } from '../hooks/useQueryTasks';
+import { useQueryGenres } from '../hooks/useQueryGenres';
+import { useMutateTask } from '../hooks/useMutateTask';
+import { useMutateAuth } from '../hooks/useMutateAuth';
+import { TaskItem } from './TaskItem';
 
 export const Todo = () => {
-  const queryClient = useQueryClient()
-  const { editedTask } = useStore()
-  const updateTask = useStore((state) => state.updateEditedTask)
-  const { data: tasks, isLoading: isTasksLoading } = useQueryTasks()
-  const { data: genres, isLoading: isGenresLoading } = useQueryGenres()
-  const { createTaskMutation, updateTaskMutation } = useMutateTask()
-  const { logoutMutation } = useMutateAuth()
-  const [selectedGenre, setSelectedGenre] = useState<number | null>(null)
+  const queryClient = useQueryClient();
+  const { editedTask } = useStore();
+  const updateTask = useStore((state) => state.updateEditedTask);
+  const { data: tasks, isLoading: isTasksLoading } = useQueryTasks();
+  const { data: genres, isLoading: isGenresLoading } = useQueryGenres();
+  const { createTaskMutation, updateTaskMutation } = useMutateTask();
+  const { logoutMutation } = useMutateAuth();
+  const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
+
+  // ジャンルの初期値を設定
+  useEffect(() => {
+    if (genres && genres.length > 0 && selectedGenre === null) {
+      setSelectedGenre(genres[0].id); // 最初のジャンルをデフォルトに設定
+    }
+  }, [genres]);
+
   const submitTaskHandler = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (editedTask.id === 0)
+    e.preventDefault();
+
+    console.log('Submitting Task:', {
+      title: editedTask.title,
+      genre_id: selectedGenre, // ログで確認
+    });
+
+    if (editedTask.id === 0) {
       createTaskMutation.mutate({
         title: editedTask.title,
-        genreId: selectedGenre,
-      })
-    else {
-      updateTaskMutation.mutate({ ...editedTask, genreId: selectedGenre })
+        genre_id: selectedGenre,
+      });
+    } else {
+      updateTaskMutation.mutate({
+        ...editedTask,
+        genre_id: selectedGenre,
+      });
     }
-  }
+  };
 
   const logout = async () => {
-    await logoutMutation.mutateAsync()
-    queryClient.removeQueries(['tasks'])
-  }
+    await logoutMutation.mutateAsync();
+    queryClient.removeQueries(['tasks']);
+  };
 
   return (
     <div className="flex justify-center items-center flex-col min-h-screen text-gray-600 font-mono">
       <div className="flex items-center my-3">
         <ShieldCheckIcon className="h-8 w-8 mr-3 text-indigo-500 cursor-pointer" />
-        <span className="text-center text-3xl font-extrabold">
-          学びの記録
-        </span>
+        <span className="text-center text-3xl font-extrabold">学びの記録</span>
         <ArrowRightOnRectangleIcon
           onClick={logout}
           className="h-6 w-6 my-6 text-blue-500 cursor-pointer ml-5"
         />
       </div>
 
-      {/* ジャンル選択 (横並び & ドロップダウン幅調整) */}
+      {/* ジャンル選択 */}
       <div className="my-2 flex items-center space-x-2">
         <label htmlFor="genre-select" className="text-sm font-medium text-gray-700">
           ジャンル:
@@ -61,7 +76,11 @@ export const Todo = () => {
           <select
             id="genre-select"
             value={selectedGenre ?? ''}
-            onChange={(e) => setSelectedGenre(Number(e.target.value))}
+            onChange={(e) => {
+              const selectedValue = Number(e.target.value);
+              console.log('Selected Genre ID:', selectedValue); // ログで確認
+              setSelectedGenre(selectedValue);
+            }}
             className="w-40 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="" disabled>
@@ -76,7 +95,7 @@ export const Todo = () => {
         )}
       </div>
 
-      {/* タスクフォーム (中央配置) */}
+      {/* タスクフォーム */}
       <form onSubmit={submitTaskHandler} className="w-full max-w-md flex flex-col items-center">
         <input
           className="mb-3 px-3 py-2 border border-gray-300 w-2/3"
@@ -93,7 +112,7 @@ export const Todo = () => {
         </button>
       </form>
 
-      {/* タスク一覧 (従来通りの幅) */}
+      {/* タスク一覧 */}
       {isTasksLoading ? (
         <p>タスクをロード中...</p>
       ) : (
@@ -104,5 +123,5 @@ export const Todo = () => {
         </ul>
       )}
     </div>
-  )
-}
+  );
+};

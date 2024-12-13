@@ -1,7 +1,7 @@
 export type Task = {
     id: number
     title: string
-    genreId?: number | null
+    genre_id?: number | null
     order?: number | null
     created_at: string
     updated_at: string
