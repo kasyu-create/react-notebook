@@ -1,15 +1,17 @@
-import { FC, memo } from 'react'
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
-import useStore from '../store'
-import { Task } from '../types'
-import { useMutateTask } from '../hooks/useMutateTask'
+import { FC, memo } from 'react';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import useStore from '../store';
+import { Task } from '../types';
+import { useMutateTask } from '../hooks/useMutateTask';
 
 const TaskItemMemo: FC<Omit<Task, 'created_at' | 'updated_at'>> = ({
   id,
   title,
+  genre_id,
 }) => {
-  const updateTask = useStore((state) => state.updateEditedTask)
-  const { deleteTaskMutation } = useMutateTask()
+  const updateTask = useStore((state) => state.updateEditedTask);
+  const { deleteTaskMutation } = useMutateTask();
+
   return (
     <li className="my-3">
       <span className="font-bold">{title}</span>
@@ -20,17 +22,19 @@ const TaskItemMemo: FC<Omit<Task, 'created_at' | 'updated_at'>> = ({
             updateTask({
               id: id,
               title: title,
-            })
+              genre_id: genre_id,
+            });
           }}
         />
         <TrashIcon
           className="h-5 w-5 text-blue-500 cursor-pointer"
           onClick={() => {
-            deleteTaskMutation.mutate(id)
+            deleteTaskMutation.mutate(id);
           }}
         />
       </div>
     </li>
-  )
-}
-export const TaskItem = memo(TaskItemMemo)
+  );
+};
+
+export const TaskItem = memo(TaskItemMemo);
