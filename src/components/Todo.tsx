@@ -8,33 +8,33 @@ import useStore from '../store';
 import { useQueryTasks } from '../hooks/useQueryTasks';
 import { useQueryGenres } from '../hooks/useQueryGenres';
 import { useMutateTask } from '../hooks/useMutateTask';
-import { useMutateAuth } from '../hooks/useMutateAuth';
 import { TaskItem } from './TaskItem';
 
 export const Todo = () => {
   const queryClient = useQueryClient();
-  const { editedTask } = useStore();
-  const updateTask = useStore((state) => state.updateEditedTask);
+  const { editedTask, updateEditedTask } = useStore();
   const { data: tasks, isLoading: isTasksLoading } = useQueryTasks();
   const { data: genres, isLoading: isGenresLoading } = useQueryGenres();
   const { createTaskMutation, updateTaskMutation } = useMutateTask();
-  const { logoutMutation } = useMutateAuth();
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
 
-  // ジャンルの初期値を設定
+  // 編集時にジャンルを設定
   useEffect(() => {
-    if (genres && genres.length > 0 && selectedGenre === null) {
-      setSelectedGenre(genres[0].id); // 最初のジャンルをデフォルトに設定
+  
+    if (genres && editedTask.genre_id !== undefined && editedTask.genre_id !== null) {
+      const matchingGenre = genres.find((genre) => genre.id === editedTask.genre_id);
+      if (matchingGenre) {
+        setSelectedGenre(matchingGenre.id); // ジャンルIDを設定
+      } else {
+        console.warn('No matching genre found for genre_id:', editedTask.genre_id);
+      }
+    } else if (genres && genres.length > 0) {
+      setSelectedGenre(genres[0].id); // 初期値として最初のジャンルを設定
     }
-  }, [genres]);
+  }, [editedTask, genres]);
 
   const submitTaskHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log('Submitting Task:', {
-      title: editedTask.title,
-      genre_id: selectedGenre, // ログで確認
-    });
 
     if (editedTask.id === 0) {
       createTaskMutation.mutate({
@@ -50,7 +50,6 @@ export const Todo = () => {
   };
 
   const logout = async () => {
-    await logoutMutation.mutateAsync();
     queryClient.removeQueries(['tasks']);
   };
 
@@ -78,8 +77,8 @@ export const Todo = () => {
             value={selectedGenre ?? ''}
             onChange={(e) => {
               const selectedValue = Number(e.target.value);
-              console.log('Selected Genre ID:', selectedValue); // ログで確認
               setSelectedGenre(selectedValue);
+              updateEditedTask({ ...editedTask, genre_id: selectedValue });
             }}
             className="w-40 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
@@ -101,7 +100,7 @@ export const Todo = () => {
           className="mb-3 px-3 py-2 border border-gray-300 w-2/3"
           placeholder="タイトル"
           type="text"
-          onChange={(e) => updateTask({ ...editedTask, title: e.target.value })}
+          onChange={(e) => updateEditedTask({ ...editedTask, title: e.target.value })}
           value={editedTask.title || ''}
         />
         <button
@@ -117,8 +116,8 @@ export const Todo = () => {
         <p>タスクをロード中...</p>
       ) : (
         <ul className="my-5 w-full max-w-md px-5">
-          {tasks?.map((task: { id: number; title: string }) => (
-            <TaskItem key={task.id} id={task.id} title={task.title} />
+          {tasks?.map((task) => (
+            <TaskItem key={task.id} {...task} />
           ))}
         </ul>
       )}

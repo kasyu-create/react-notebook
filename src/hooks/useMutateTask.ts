@@ -33,6 +33,7 @@ export const useMutateTask = () => {
     (task: Omit<Task, 'created_at' | 'updated_at'>) =>
       axios.put<Task>(`${process.env.REACT_APP_API_URL}/tasks/${task.id}`, {
         title: task.title,
+        genre_id: task.genre_id,
       }),
     {
       onSuccess: (res, variables) => {
