@@ -51,6 +51,7 @@ export const Todo = () => {
 
   const logout = async () => {
     queryClient.removeQueries(['tasks']);
+    window.location.href = '/';
   };
 
   return (
