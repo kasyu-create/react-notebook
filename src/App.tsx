@@ -20,9 +20,11 @@ function App() {
     }
     const checkAuth = async () => {
       try {
-        await axios.get(`${process.env.REACT_APP_API_URL}/me`, {
+        console.log('Sending /me request...');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/me`, {
           withCredentials: true, // クッキーでJWTトークンを送信
         });
+        console.log('Auth response:', response.data);
         setAuth(true);
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
